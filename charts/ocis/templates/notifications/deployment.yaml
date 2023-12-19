@@ -23,6 +23,10 @@ spec:
           args: ["notifications", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: NOTIFICATIONS_LOG_COLOR
@@ -46,7 +50,7 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: NOTIFICATIONS_DEBUG_ADDR
-              value: 0.0.0.0:9174
+              value: $(POD_IP):9174
 
             - name: NOTIFICATIONS_SMTP_HOST
               value: {{ .Values.features.emailNotifications.smtp.host | quote }}

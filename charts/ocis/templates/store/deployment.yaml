@@ -33,6 +33,10 @@ spec:
           args: ["store", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: STORE_LOG_COLOR
@@ -55,9 +59,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: STORE_GRPC_ADDR
-              value: 0.0.0.0:9460
+              value: $(POD_IP):9460
             - name: STORE_DEBUG_ADDR
-              value: 0.0.0.0:9464
+              value: $(POD_IP):9464
 
           {{- include "ocis.livenessProbe" . | nindent 10 }}
 

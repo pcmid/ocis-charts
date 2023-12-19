@@ -22,6 +22,10 @@ spec:
           args: ["frontend", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: FRONTEND_LOG_COLOR
@@ -44,9 +48,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: FRONTEND_HTTP_ADDR
-              value: 0.0.0.0:9140
+              value: $(POD_IP):9140
             - name: FRONTEND_DEBUG_ADDR
-              value: 0.0.0.0:9141
+              value: $(POD_IP):9141
 
             - name: FRONTEND_PUBLIC_URL
               value: "https://{{ .Values.externalDomain }}"

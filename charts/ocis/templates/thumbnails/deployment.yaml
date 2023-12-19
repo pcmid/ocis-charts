@@ -34,6 +34,10 @@ spec:
           args: ["thumbnails", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: THUMBNAILS_LOG_COLOR
@@ -56,11 +60,11 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: THUMBNAILS_GRPC_ADDR
-              value: 0.0.0.0:9185
+              value: $(POD_IP):9185
             - name: THUMBNAILS_HTTP_ADDR
-              value: 0.0.0.0:9186
+              value: $(POD_IP):9186
             - name: THUMBNAILS_DEBUG_ADDR
-              value: 0.0.0.0:9189
+              value: $(POD_IP):9189
 
             - name: THUMBNAILS_DATA_ENDPOINT
               value: http://{{ .appName }}:9186/thumbnails/data

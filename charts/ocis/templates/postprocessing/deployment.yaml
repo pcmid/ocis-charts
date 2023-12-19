@@ -25,6 +25,10 @@ spec:
           args: ["postprocessing", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: POSTPROCESSING_LOG_COLOR
@@ -48,7 +52,7 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: POSTPROCESSING_DEBUG_ADDR
-              value: 0.0.0.0:9255
+              value: $(POD_IP):9255
 
             {{- $_ := set . "postprocessingSteps" list -}}
             {{/*

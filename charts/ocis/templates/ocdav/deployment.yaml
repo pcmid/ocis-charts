@@ -22,6 +22,10 @@ spec:
           args: ["ocdav", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: OCDAV_LOG_COLOR
@@ -44,9 +48,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: OCDAV_HTTP_ADDR
-              value: 0.0.0.0:8080
+              value: $(POD_IP):8080
             - name: OCDAV_DEBUG_ADDR
-              value: 0.0.0.0:9163
+              value: $(POD_IP):9163
 
             - name: OCDAV_PUBLIC_URL
               value: "https://{{ .Values.externalDomain }}"

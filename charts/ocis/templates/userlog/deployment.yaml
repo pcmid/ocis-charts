@@ -23,6 +23,10 @@ spec:
           args: ["userlog", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: USERLOG_LOG_COLOR
@@ -46,10 +50,10 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: USERLOG_HTTP_ADDR
-              value: 0.0.0.0:8080
+              value: $(POD_IP):8080
 
             - name: USERLOG_DEBUG_ADDR
-              value: 0.0.0.0:9210
+              value: $(POD_IP):9210
 
             - name: USERLOG_STORE
               value: {{ .store.type | quote }}

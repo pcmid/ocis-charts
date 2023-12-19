@@ -22,6 +22,10 @@ spec:
           args: ["sharing", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: SHARING_LOG_COLOR
@@ -44,9 +48,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: SHARING_GRPC_ADDR
-              value: 0.0.0.0:9150
+              value: $(POD_IP):9150
             - name: SHARING_DEBUG_ADDR
-              value: 0.0.0.0:9151
+              value: $(POD_IP):9151
 
             - name: SHARING_EVENTS_ENDPOINT
             {{- if not .Values.messagingSystem.external.enabled }}

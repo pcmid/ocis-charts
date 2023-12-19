@@ -23,6 +23,10 @@ spec:
           args: ["eventhistory", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: EVENTHISTORY_LOG_COLOR
@@ -46,10 +50,10 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: EVENTHISTORY_GRPC_ADDR
-              value: 0.0.0.0:8080
+              value: $(POD_IP):8080
 
             - name: EVENTHISTORY_DEBUG_ADDR
-              value: 0.0.0.0:9270
+              value: $(POD_IP):9270
 
             - name: EVENTHISTORY_STORE
               value: {{ .store.type | quote }}

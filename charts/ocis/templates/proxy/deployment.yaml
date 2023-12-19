@@ -22,6 +22,10 @@ spec:
           args: ["proxy", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: PROXY_LOG_COLOR
@@ -44,9 +48,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: PROXY_HTTP_ADDR
-              value: 0.0.0.0:9200
+              value: $(POD_IP):9200
             - name: PROXY_DEBUG_ADDR
-              value: 0.0.0.0:9205
+              value: $(POD_IP):9205
 
             - name: PROXY_ENABLE_BASIC_AUTH
               value: {{ .Values.features.basicAuthentication | quote }}
