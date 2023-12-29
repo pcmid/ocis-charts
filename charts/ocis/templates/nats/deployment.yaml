@@ -36,6 +36,10 @@ spec:
           args: ["nats", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             - name: NATS_LOG_COLOR
               value: {{ .Values.logging.color | quote }}
             - name: NATS_LOG_LEVEL
@@ -57,12 +61,12 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: NATS_NATS_HOST
-              value: "0.0.0.0"
+              value: "$(POD_IP)"
             - name: NATS_NATS_PORT
               value: "9233"
 
             - name: NATS_DEBUG_ADDR
-              value: 0.0.0.0:9234
+              value: $(POD_IP):9234
 
           {{- include "ocis.livenessProbe" . | nindent 10 }}
 

@@ -24,6 +24,10 @@ spec:
           args: ["auth-machine", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: AUTH_MACHINE_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: AUTH_MACHINE_GRPC_ADDR
-              value: 0.0.0.0:9166
+              value: $(POD_IP):9166
             - name: AUTH_MACHINE_DEBUG_ADDR
-              value: 0.0.0.0:9167
+              value: $(POD_IP):9167
 
             - name: AUTH_MACHINE_JWT_SECRET
               valueFrom:

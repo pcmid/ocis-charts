@@ -24,6 +24,10 @@ spec:
           args: ["gateway", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: GATEWAY_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: GATEWAY_GRPC_ADDR
-              value: 0.0.0.0:9142
+              value: $(POD_IP):9142
             - name: GATEWAY_DEBUG_ADDR
-              value: 0.0.0.0:9143
+              value: $(POD_IP):9143
 
             - name: GATEWAY_FRONTEND_PUBLIC_URL
               value: "https://{{ .Values.externalDomain }}"

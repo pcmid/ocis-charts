@@ -24,6 +24,10 @@ spec:
           args: ["ocs", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: OCS_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: OCS_HTTP_ADDR
-              value: 0.0.0.0:9110
+              value: $(POD_IP):9110
             - name: OCS_DEBUG_ADDR
-              value: 0.0.0.0:9114
+              value: $(POD_IP):9114
 
             - name: OCS_IDM_ADDRESS
             {{ if not .Values.features.externalUserManagement.enabled }}

@@ -24,6 +24,10 @@ spec:
           args: ["storage-shares", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: STORAGE_SHARES_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: STORAGE_SHARES_GRPC_ADDR
-              value: 0.0.0.0:9154
+              value: $(POD_IP):9154
             - name: STORAGE_SHARES_DEBUG_ADDR
-              value: 0.0.0.0:9156
+              value: $(POD_IP):9156
 
             - name: STORAGE_SHARES_JWT_SECRET
               valueFrom:

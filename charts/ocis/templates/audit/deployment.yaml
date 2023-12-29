@@ -24,6 +24,10 @@ spec:
           args: ["audit", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: AUDIT_LOG_COLOR
@@ -46,7 +50,7 @@ spec:
             - name: AUDIT_DEBUG_PPROF
               value: {{ .Values.debug.profiling | quote }}
             - name: AUDIT_DEBUG_ADDR
-              value: 0.0.0.0:9229
+              value: $(POD_IP):9229
 
             - name: AUDIT_EVENTS_ENDPOINT
             {{- if not .Values.messagingSystem.external.enabled }}

@@ -36,6 +36,10 @@ spec:
           args: ["storage-system", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             # logging
@@ -60,13 +64,13 @@ spec:
 
             # bind configuration
             - name: STORAGE_SYSTEM_GRPC_ADDR
-              value: 0.0.0.0:9215
+              value: $(POD_IP):9215
             - name: STORAGE_SYSTEM_DEBUG_ADDR
-              value: 0.0.0.0:9217
+              value: $(POD_IP):9217
 
             # external availability data gateway
             - name: STORAGE_SYSTEM_HTTP_ADDR
-              value: 0.0.0.0:9216
+              value: $(POD_IP):9216
             - name: STORAGE_SYSTEM_DATA_SERVER_URL
               value: http://{{ .appName }}:9216/data
 

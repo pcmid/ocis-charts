@@ -24,6 +24,10 @@ spec:
           args: ["webdav", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: WEBDAV_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: WEBDAV_HTTP_ADDR
-              value: 0.0.0.0:9115
+              value: $(POD_IP):9115
             - name: WEBDAV_DEBUG_ADDR
-              value: 0.0.0.0:9119
+              value: $(POD_IP):9119
 
             - name: OCIS_PUBLIC_URL
               value: "https://{{ .Values.externalDomain }}"

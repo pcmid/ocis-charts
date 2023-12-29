@@ -25,6 +25,10 @@ spec:
           args: ["auth-basic", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: AUTH_BASIC_LOG_COLOR
@@ -47,9 +51,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: AUTH_BASIC_GRPC_ADDR
-              value: 0.0.0.0:9146
+              value: $(POD_IP):9146
             - name: AUTH_BASIC_DEBUG_ADDR
-              value: 0.0.0.0:9147
+              value: $(POD_IP):9147
 
             {{- if .Values.features.externalUserManagement.enabled }}
             - name: AUTH_BASIC_LDAP_INSECURE

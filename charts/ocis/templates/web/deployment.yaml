@@ -24,6 +24,10 @@ spec:
           args: ["web", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: WEB_LOG_COLOR
@@ -46,9 +50,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: WEB_HTTP_ADDR
-              value: 0.0.0.0:9100
+              value: $(POD_IP):9100
             - name: WEB_DEBUG_ADDR
-              value: 0.0.0.0:9104
+              value: $(POD_IP):9104
 
             - name: WEB_OIDC_AUTHORITY
             {{- if not .Values.features.externalUserManagement.enabled }}

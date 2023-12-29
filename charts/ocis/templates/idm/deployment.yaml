@@ -44,6 +44,10 @@ spec:
           args: ["idm", "server"]
           {{- include "ocis.containerSecurityContext" . | nindent 10 }}
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- include "ocis.serviceRegistry" . | nindent 12 }}
 
             - name: IDM_LOG_COLOR
@@ -66,9 +70,9 @@ spec:
               value: {{ .Values.debug.profiling | quote }}
 
             - name: IDM_LDAPS_ADDR
-              value: 0.0.0.0:9235
+              value: $(POD_IP):9235
             - name: IDM_DEBUG_ADDR
-              value: 0.0.0.0:9239
+              value: $(POD_IP):9239
 
             - name: IDM_CREATE_DEMO_USERS
               value: {{ .Values.features.demoUsers | quote }}
