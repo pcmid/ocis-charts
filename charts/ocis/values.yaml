@@ -271,6 +271,12 @@ features:
       editAccountLink: ""
       # -- Specify the client ID which the web frontend will use
       webClientID: web
+      # oidc scope
+      webScope:
+        - openid
+        - profile
+        - groups
+        - email
       # -- Claim to take an unique user identifier from. It will be used to look up the user on the LDAP server.
       userIDClaim: ocis.user.uuid
       # -- Attribute mapping of for the userIDClaim.
